@@ -1,11 +1,3 @@
-// DATA SOURCES
-data "azurerm_subnet" "subnet" {
-  name                 = var.subnet_name
-  virtual_network_name = var.vnet_name
-  resource_group_name  = var.vnet_resource_group_name
-}
-
-// RESOURCES
 # Generate random text for a unique storage account name
 resource "random_id" "random_id" {
   keepers = {
@@ -17,7 +9,8 @@ resource "random_id" "random_id" {
 
 # Create public IP address
 resource "azurerm_public_ip" "pip" {
-  name                = "pip_${lower(random_id.random_id.hex)}"
+  count               = local.create_public_ip ? 1 : 0
+  name                = "pip_vm${random_id.random_id.hex}"
   resource_group_name = var.resource_group_name
   location            = var.location
   allocation_method   = "Dynamic"
@@ -26,7 +19,7 @@ resource "azurerm_public_ip" "pip" {
 
 # Create a network interface card and assign an IP from the subnet and attach the PIP
 resource "azurerm_network_interface" "nic" {
-  name                = "nic_${lower(random_id.random_id.hex)}"
+  name                = "nic_vm${random_id.random_id.hex}"
   resource_group_name = var.resource_group_name
   location            = var.location
 
@@ -34,14 +27,14 @@ resource "azurerm_network_interface" "nic" {
     name                          = "internal"
     subnet_id                     = data.azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.pip.id
+    public_ip_address_id          = local.create_public_ip ? azurerm_public_ip.pip[0].id : null
   }
   tags = local.tags
 }
 
 # Create storage account for boot diagnostics
 resource "azurerm_storage_account" "storage_account" {
-  name                     = "diag${lower(random_id.random_id.hex)}"
+  name                     = "diagvm${random_id.random_id.hex}"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
@@ -56,16 +49,16 @@ resource "tls_private_key" "example_ssh" {
 
 # Create a virtual machine
 resource "azurerm_linux_virtual_machine" "vm" {
-  name                = "vm${random_id.random_id.hex}"
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  size                = "Standard_B1s"
-  network_interface_ids = [
-    azurerm_network_interface.nic.id
-  ]
+  name                  = "vm${random_id.random_id.hex}"
+  resource_group_name   = var.resource_group_name
+  location              = var.location
+  size                  = "Standard_B1s"
+  network_interface_ids = [azurerm_network_interface.nic.id]
+
+
 
   os_disk {
-    name                 = "os_disk_${random_id.random_id.hex}"
+    name                 = "os_disk_vm${random_id.random_id.hex}"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
@@ -94,12 +87,4 @@ resource "azurerm_linux_virtual_machine" "vm" {
   custom_data = filebase64("cloudinit.tpl")
 
   tags = local.tags
-}
-
-locals {
-  tags = {
-    appname    = var.prefix
-    env        = var.environment
-    created_by = var.created_by
-  }
 }

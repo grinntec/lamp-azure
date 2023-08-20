@@ -74,20 +74,16 @@ variable "subnet_name" {
   EOT
 }
 
-
-variable "create_public_ip" {
+variable "existing_vm_nic_name" {
   type        = string
   description = <<EOT
-  Defines if a public IP is created.
-
-  Options:
-  - yes
-  - no
-
+  (Required) Name of the existing VM NIC
   EOT
+}
 
-  validation {
-    condition     = can(regex("^yes$|^no$", var.create_public_ip))
-    error_message = "Err: Valid options are yes or no."
-  }
+variable "existing_vm_nic_resource_group" {
+  type        = string
+  description = <<EOT
+  (Required) Name of the existing VM resource group
+  EOT
 }

@@ -9,4 +9,5 @@ module "azure_linux_virtual_machine" {
   vnet_resource_group_name = var.vnet_resource_group_name
   vnet_name                = var.vnet_name
   subnet_name              = var.subnet_name
+  create_public_ip         = var.create_public_ip
 }

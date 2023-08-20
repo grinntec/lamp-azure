@@ -73,3 +73,21 @@ variable "subnet_name" {
   (Required) Name of the subnet
   EOT
 }
+
+
+variable "create_public_ip" {
+  type        = string
+  description = <<EOT
+  Defines if a public IP is created.
+
+  Options:
+  - yes
+  - no
+
+  EOT
+
+  validation {
+    condition     = can(regex("^yes$|^no$", var.create_public_ip))
+    error_message = "Err: Valid options are yes or no."
+  }
+}
