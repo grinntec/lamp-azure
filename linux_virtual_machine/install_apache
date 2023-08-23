@@ -1,0 +1,22 @@
+#cloud-config
+packages:
+  - apache2
+
+apt_update: true
+apt_upgrade: true
+
+runcmd:
+  - ufw allow 'Apache'
+  - chown -R $USER:$USER /var/www
+  - |
+    echo '<!DOCTYPE html>
+    <html>
+    <head>
+    <title>apache.web.server</title>
+    <meta charset="UTF-8">
+    </head>
+    <body>
+    <h1>This server was built automatically using Terraform</h1>
+    <h2>Hostname : ' $(hostname) '</h2>
+    </body>
+    </html>' > /var/www/html/index.html
