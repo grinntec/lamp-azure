@@ -1,5 +1,5 @@
 module "key_vault" {
-  source = "git@github.com:grinntec-terraform-azure/terraform-azurerm-key_vault.git?ref=0.1.24"
+  source = "git@github.com:grinntec-terraform-azure/terraform-azurerm-key_vault.git?ref=0.1.30"
   #these are the default variables for all resources
   resource_group_name     = var.resource_group_name
   resource_group_location = var.resource_group_location
@@ -14,5 +14,5 @@ module "key_vault" {
   purge_protection_enabled        = var.purge_protection_enabled
   public_network_access_enabled   = var.public_network_access_enabled
   soft_delete_retention_days      = var.soft_delete_retention_days
-  appuser_object_id               = var.appuser_object_id
+  appowner                        = var.appowner
 }
