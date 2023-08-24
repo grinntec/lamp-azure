@@ -53,12 +53,12 @@ variable "sku_name" {
   The Name of the SKU used for this Key Vault.
   
   Options:
-  - Standard
-  - Premium.
+  - standard
+  - premium
 
   EOT
 
-  default = "Standard"
+  default = "standard"
 }
 
 variable "enabled_for_deployment" {
@@ -134,6 +134,10 @@ variable "soft_delete_retention_days" {
   default     = 90
 }
 
-variable "appuser_object_id" {
-  type = string
+variable "appowner" {
+  type        = string
+  description = <<EOT
+  (Required) Enter the UPN of the application owner.  
+
+  EOT
 }
