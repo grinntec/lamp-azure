@@ -1,5 +1,5 @@
 module "load_balancer" {
-  source = "git@github.com:grinntec-terraform-azure/terraform-azurerm-load_balancer_public.git?ref=0.1.45"
+  source = "git@github.com:grinntec-terraform-azure/terraform-azurerm-load_balancer_public.git?ref=0.1.47"
   #these are the default variables for all resources
   resource_group_name     = var.resource_group_name
   resource_group_location = var.resource_group_location
